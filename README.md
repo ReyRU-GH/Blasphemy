@@ -1,6 +1,8 @@
 # Deep Torment - Terraria Mod
 
-ENGLISH | [РУССКИЙ](#русский)
+## ENGLISH | [РУССКИЙ](#русский)
+
+## ENGLISH
 
 ## FEATURES
 - New enemies and bosses
