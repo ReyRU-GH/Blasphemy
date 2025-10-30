@@ -1,15 +1,6 @@
 displayName = Deep Torment
 author = ReyRU-GH
 version = 0.1
-homepage = 
 hideCode = true
 hideResources = true
-includeSource = false
-includePDB = false
-buildIgnore = *.dsrc, .git/, .vs/
-side = Both
-sortAfter = [0]
-sortBefore = []
-dllReferences = []
-weakReferences = []
-modReferences = []
+
