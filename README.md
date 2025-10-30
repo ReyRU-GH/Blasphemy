@@ -1,6 +1,6 @@
 # Deep Torment - Terraria Mod
 
- [ENGLISH](#english) | [РУССКИЙ](#русский)
+ [ENGLISH](#english) | [RUSSIAN](#русский)
 
 ## ENGLISH
 
