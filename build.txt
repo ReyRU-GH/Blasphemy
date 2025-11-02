@@ -1,7 +1,8 @@
-displayName = DeepTorment
-author = ReyRU-GH
+displayName = Deep Torment
+author = ReyRU
 version = 0.1
-hideCode = true
-hideResources = true
+hideCode = false
+hideResources = false
+
 
 
