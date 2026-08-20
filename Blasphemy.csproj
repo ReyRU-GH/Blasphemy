@@ -1,9 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
+
+	<!-- Import tModLoader mod properties -->
+	<Import Project="..\tModLoader.targets" />
   <Import Project="..\..\references\tModLoader.targets" />
   <PropertyGroup>
-    <AssemblyName>DeepTorment</AssemblyName>
-    <TargetFramework>net6.0</TargetFramework>
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <AssemblyName>Blasphemy</AssemblyName>
     <LangVersion>latest</LangVersion>
+    <RootNamespace>Blasphemy</RootNamespace>
   </PropertyGroup>
 </Project>
