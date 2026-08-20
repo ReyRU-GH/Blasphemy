@@ -1,4 +1,4 @@
-displayName = Deep Torment
+displayName = Blasphemy
 author = ReyRU
 version = 0.1
 hideCode = false
