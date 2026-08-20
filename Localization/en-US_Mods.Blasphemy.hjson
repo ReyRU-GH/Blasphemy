@@ -1,1 +1,73 @@
+DamageClasses.SacrificialDamage.DisplayName: Sacrificial Damage
+Death.LifeCost: "{0} has exhausted their life force."
+Config.PainUI: Pain UI
 
+Tooltips: {
+	LifeCost: Costs {0} HP per swing
+	Recovery: Converts {0}% of cost ({1}) to Recovery
+}
+
+Stats.RecoveryDisplay: Recovery: {0}
+
+Items: {
+	SacrificialSword: {
+		DisplayName: Sacrificial Sword
+		Tooltip: Test Description
+	}
+
+	PainAmulet: {
+		Tooltip: ""
+		DisplayName: Pain Amulet
+	}
+
+	GlassShard: {
+		Tooltip: ""
+		DisplayName: Glass Shard
+	}
+}
+
+Configs: {
+	BlasphemyConfig: {
+		ShowPainBar: {
+			Tooltip: ""
+			Label: Show Pain Bar
+		}
+
+		PainBarScale: {
+			Tooltip: ""
+			Label: Pain Bar Scale
+		}
+
+		PainBarPosition: {
+			Tooltip: ""
+			Label: Pain Bar Position
+		}
+
+		Headers: {
+			Mods.Blasphemy.Config.PainUI: Mods. Blasphemy. Config. Pain U I Header
+			PainBarUI: Pain Bar U I Header
+		}
+
+		DisplayName: Blasphemy Config
+
+		LockPainBarPosition: {
+			Tooltip: ""
+			Label: Lock Pain Bar Position
+		}
+
+		PainBarPosY: {
+			Tooltip: ""
+			Label: Pain Bar Pos Y
+		}
+
+		PainBarPosX: {
+			Tooltip: ""
+			Label: Pain Bar Pos X
+		}
+	}
+}
+
+Keybinds: {
+	"Add Pain (Test).DisplayName": Add  Pain ( Test)
+	"Remove Pain (Test).DisplayName": Remove  Pain ( Test)
+}
