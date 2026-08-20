@@ -1,4 +1,4 @@
-# Deep Torment - Terraria Mod
+# Blasphemy - Terraria Mod
 
  [English](#english) | [Русский](#русский)
 
