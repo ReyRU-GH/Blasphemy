@@ -21,7 +21,7 @@ namespace Blasphemy.Systems
         private const float MouseDragEpsilon = 0.05f;
         private const float BaseSpriteScale = 2.5f; // TODO: Change to 1f when sprite will be noramlized
 
-        private static Vector2? _dragOffset = null;
+        private static Vector2? _dragOffset;
         private static Texture2D _barBgTexture;
         private static Texture2D _barFillTexture;
         private static Texture2D _barFrameTexture;
@@ -83,7 +83,6 @@ namespace Blasphemy.Systems
                 {
                     config.PainBarPosX = screenRatio.X;
                     config.PainBarPosY = screenRatio.Y;
-                    config.SaveChanges();
                 }
             }
             
@@ -119,13 +118,11 @@ namespace Blasphemy.Systems
                     if (_dragOffset.HasValue && ms.LeftButton == ButtonState.Released)
                     {
                         _dragOffset = null;
-                        config.SaveChanges();
                     }
                 }
                 else if (_dragOffset.HasValue && ms.LeftButton == ButtonState.Released)
                 {
                     _dragOffset = null;
-                    config.SaveChanges();
                 }
             }
         }
