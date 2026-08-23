@@ -34,7 +34,7 @@ namespace Blasphemy.Items
                 PlayerDeathReason customReason = PlayerDeathReason.ByCustomReason(
                     NetworkText.FromKey(LifeCostDeathMessageKey, player.name)
                 );
-                player.KillMe(customReason, 9999, 0, false);
+                player.KillMe(customReason, 9999, 0);
                 return false;
             }
 

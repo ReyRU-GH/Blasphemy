@@ -11,7 +11,7 @@ namespace Blasphemy.Players
     public class BlasphemyPlayer : ModPlayer
     {
         public int RecoveryStat;
-        private int _recoveryTimer = 0; 
+        private int _recoveryTimer; 
         private const int RecoveryInterval = 60;
 
         public const int DefaultMaxPain = 100;
@@ -26,11 +26,11 @@ namespace Blasphemy.Players
         private const float PainDecayStartRate = 1f;   // 1 очко в секунду в начале
         private const float PainDecayMaxRate = 20f;    // 20 очков в секунду на пике
 
-        public float agonyImmunityTimer;
-        public float lifeCostReductionTimer;
+        public float AgonyImmunityTimer;
+        public float LifeCostReductionTimer;
         
-        private float painDecayTimer;         
-        private float decayAccumulator; 
+        private float _painDecayTimer;         
+        private float _decayAccumulator; 
         
         public Item LastWeaponUsed;
 
@@ -43,10 +43,10 @@ namespace Blasphemy.Players
             IsAgonized = false;
             MaxPainMultiplier = 1f;
             PainGainMultiplier = 1f;
-            agonyImmunityTimer = 0f;
-            lifeCostReductionTimer = 0f;
-            painDecayTimer = 0f;
-            decayAccumulator = 0f;
+            AgonyImmunityTimer = 0f;
+            LifeCostReductionTimer = 0f;
+            _painDecayTimer = 0f;
+            _decayAccumulator = 0f;
         }
 
         public override void ResetEffects()
@@ -94,26 +94,26 @@ namespace Blasphemy.Players
             }
             
             float dt = 1f / 60f;
-            if (agonyImmunityTimer > 0f) agonyImmunityTimer -= dt;
-            if (lifeCostReductionTimer > 0f) lifeCostReductionTimer -= dt;
-            if (PainStat > 0 && agonyImmunityTimer <= 0f)
+            if (AgonyImmunityTimer > 0f) AgonyImmunityTimer -= dt;
+            if (LifeCostReductionTimer > 0f) LifeCostReductionTimer -= dt;
+            if (PainStat > 0 && AgonyImmunityTimer <= 0f)
             {
-                painDecayTimer += dt;
+                _painDecayTimer += dt;
 
-                if (painDecayTimer >= PainDecayDelay)
+                if (_painDecayTimer >= PainDecayDelay)
                 {
-                    float timeSinceRampStart = painDecayTimer - PainDecayDelay;
+                    float timeSinceRampStart = _painDecayTimer - PainDecayDelay;
                     float rampProgress = MathHelper.Clamp(timeSinceRampStart / PainDecayRampTime, 0f, 1f);
                     
                     float currentRatePerSecond = MathHelper.Lerp(PainDecayStartRate, PainDecayMaxRate, rampProgress);
                     
-                    decayAccumulator += currentRatePerSecond * dt;
+                    _decayAccumulator += currentRatePerSecond * dt;
                     
-                    if (decayAccumulator >= 1f)
+                    if (_decayAccumulator >= 1f)
                     {
-                        int decayAmount = (int)decayAccumulator;
+                        int decayAmount = (int)_decayAccumulator;
                         PainStat -= decayAmount;
-                        decayAccumulator -= decayAmount;
+                        _decayAccumulator -= decayAmount;
                         
                         if (PainStat < 0) PainStat = 0;
                     }
@@ -121,8 +121,8 @@ namespace Blasphemy.Players
             }
             else
             {
-                painDecayTimer = 0f;
-                decayAccumulator = 0f;
+                _painDecayTimer = 0f;
+                _decayAccumulator = 0f;
             }
         }
 
@@ -134,11 +134,12 @@ namespace Blasphemy.Players
 
         public void AddPain(int amount)
         {
-            if (amount <= 0 || agonyImmunityTimer > 0f) return;
+            if (amount <= 0 || AgonyImmunityTimer > 0f) return;
             
             int modifiedAmount = (int)(amount * PainGainMultiplier);
             if (modifiedAmount <= 0) return;
-
+            
+            _painDecayTimer = 0;
             PainStat += modifiedAmount;
             if (PainStat > MaxPain) PainStat = MaxPain;
         }
@@ -149,7 +150,7 @@ namespace Blasphemy.Players
             // +1% за каждые 10 боли
             cost *= 1f + (PainStat / 10f) * 0.01f;
             // -15% после агонии
-            if (lifeCostReductionTimer > 0f) cost *= 0.85f;
+            if (LifeCostReductionTimer > 0f) cost *= 0.85f;
 
             return Math.Max(1, (int)cost);
         }
@@ -157,10 +158,10 @@ namespace Blasphemy.Players
 
         private void HandleHit(Item item)
         {
-
-            if (item.ModItem is BlasphemySystem.IConditionalActivation)
+            if (LastWeaponUsed.ModItem is BlasphemySystem.IConditionalActivation)
             {
-                if (item.ModItem is BlasphemySystem.ILifeCostItem lc)
+                Main.NewText(LastWeaponUsed);
+                if (LastWeaponUsed.ModItem is BlasphemySystem.ILifeCostItem lc)
                 {
                     int effCost = GetEffectiveLifeCost(lc.LifeCost);
                     Player.statLife -= effCost;
@@ -174,7 +175,7 @@ namespace Blasphemy.Players
                     }
                 }
 
-                if (item.ModItem is BlasphemySystem.IPainWeapon pw)
+                if (LastWeaponUsed.ModItem is BlasphemySystem.IPainWeapon pw)
                 {
                     AddPain(pw.PainGain);
                 }
@@ -184,8 +185,8 @@ namespace Blasphemy.Players
             {
                 IsAgonized = false; 
                 PainStat = 0;
-                agonyImmunityTimer = 10f;
-                lifeCostReductionTimer = 10f;
+                AgonyImmunityTimer = 10f;
+                LifeCostReductionTimer = 10f;
                 CombatText.NewText(Player.getRect(), new Color(255, 215, 0), "AGONY STRIKE!", dramatic: true);
             }
         }
@@ -193,15 +194,16 @@ namespace Blasphemy.Players
         public override void OnHitNPCWithItem(Item item, NPC target, NPC.HitInfo hit, int damageDone)
         {
             LastWeaponUsed = item;
-            HandleHit(item);
+            HandleHit(LastWeaponUsed);
         }
 
         public override void OnHitNPCWithProj(Projectile proj, NPC target, NPC.HitInfo hit, int damageDone)
         {
-            if (proj.owner == Player.whoAmI && LastWeaponUsed != null)
-            {
+            if (proj.owner == Player.whoAmI && proj.TryGetGlobalProjectile<GlobalProjectileTracker>(out var tracker) && tracker.ParentItem != null) {
+                LastWeaponUsed = tracker.ParentItem;
                 HandleHit(LastWeaponUsed);
             }
+            
         }
         
         public override void ModifyWeaponDamage(Item item, ref StatModifier damage)

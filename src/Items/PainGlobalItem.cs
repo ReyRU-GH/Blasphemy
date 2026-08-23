@@ -10,12 +10,22 @@ namespace Blasphemy.Items
 {
     public class PainGlobalItem : GlobalItem
     {
-        public override void UseAnimation(Item item, Player player)
+        public override bool? UseItem(Item item, Player player)
         {
+            if (item.ModItem is BlasphemySystem.IPainWeapon pw && pw.PainGain > 0 && player.itemAnimation == player.itemAnimationMax && item.ModItem is not BlasphemySystem.IConditionalActivation)
+            {
+                var bp = player.GetModPlayer<BlasphemyPlayer>();
+                bp.AddPain(pw.PainGain);
+                
+                bp.LastWeaponUsed = item;
+            }
 
-            if (item.ModItem is BlasphemySystem.IConditionalActivation) return;
+            return true;
+        }
 
-            if (item.ModItem is BlasphemySystem.IPainWeapon pw && pw.PainGain > 0)
+        public override void OnHitNPC(Item item, Player player, NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            if (item.ModItem is BlasphemySystem.IPainWeapon pw && pw.PainGain > 0 && player.itemAnimation == player.itemAnimationMax && item.ModItem is BlasphemySystem.IConditionalActivation)
             {
                 var bp = player.GetModPlayer<BlasphemyPlayer>();
                 bp.AddPain(pw.PainGain);

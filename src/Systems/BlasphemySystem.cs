@@ -11,7 +11,15 @@ namespace Blasphemy.Systems
         
         public interface ILifeCostItem
         {
+            /// <summary>
+            /// How much HP costs one usage of an item
+            /// <para>TODO: Test how it works with magic weapon (i.e. Last Prism) </para>
+            /// </summary>
             int LifeCost { get; }
+            
+            /// <summary>
+            /// How many % of HP taken by LifeCost stat is returned back to the player 
+            /// </summary>
             int RecoveryPercent { get; }
         }
         public interface IPainWeapon
