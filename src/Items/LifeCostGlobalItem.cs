@@ -15,19 +15,23 @@ namespace Blasphemy.Items
     {
         public const string LifeCostDeathMessageKey = "Mods.Blasphemy.Death.LifeCost";
 
-        private int GetLifeCost(Item item) => item.ModItem is BlasphemySystem.ILifeCostItem lc ? lc.LifeCost : 0;
-        private int GetRecoveryPercent(Item item) => item.ModItem is BlasphemySystem.ILifeCostItem lc ? lc.RecoveryPercent : 0;
+        private int GetLifeCost(Item item, Player player) => item.ModItem is BlasphemySystem.IContextualLifeCostItem contextual
+            ? contextual.GetLifeCost(player) : item.ModItem is BlasphemySystem.ILifeCostItem lc ? lc.LifeCost : 0;
+        private int GetRecoveryPercent(Item item, Player player) => item.ModItem is BlasphemySystem.IContextualLifeCostItem contextual
+            ? contextual.GetRecoveryPercent(player) : item.ModItem is BlasphemySystem.ILifeCostItem lc ? lc.RecoveryPercent : 0;
         
         private bool IsConditional(Item item) => item.ModItem is BlasphemySystem.IConditionalActivation;
 
         public override bool CanUseItem(Item item, Player player)
         {
-            int baseCost = GetLifeCost(item);
+            int baseCost = GetLifeCost(item, player);
             if (baseCost <= 0) return base.CanUseItem(item, player);
+            if (IsConditional(item)) return base.CanUseItem(item, player);
 
             var bp = player.GetModPlayer<BlasphemyPlayer>();
          
-            int effectiveCost = bp.GetEffectiveLifeCost(baseCost);
+            int effectiveCost = item.ModItem is BlasphemySystem.IExactAgonizedLifeCost && bp.IsAgonized
+                ? baseCost : bp.GetEffectiveLifeCost(baseCost);
 
             if (player.statLife <= effectiveCost)
             {
@@ -46,19 +50,30 @@ namespace Blasphemy.Items
            
             if (IsConditional(item))
             {
+                if (item.ModItem is BlasphemySystem.IAgonizedWeapon)
+                    player.GetModPlayer<BlasphemyPlayer>().BeginAgonizedAttack(item);
                 base.UseAnimation(item, player);
                 return;
             }
 
-            int baseCost = GetLifeCost(item);
+            int baseCost = GetLifeCost(item, player);
             if (baseCost <= 0)
             {
+                player.GetModPlayer<BlasphemyPlayer>().LastLifeSpent = 0;
+                if (item.ModItem is BlasphemySystem.IAgonizedWeapon)
+                    player.GetModPlayer<BlasphemyPlayer>().BeginAgonizedAttack(item);
                 base.UseAnimation(item, player);
                 return;
             }
 
             var bp = player.GetModPlayer<BlasphemyPlayer>();
-            int effectiveCost = bp.GetEffectiveLifeCost(baseCost);
+            int effectiveCost = item.ModItem is BlasphemySystem.IExactAgonizedLifeCost && bp.IsAgonized
+                ? baseCost : bp.GetEffectiveLifeCost(baseCost);
+            int recoveryPercent = GetRecoveryPercent(item, player);
+            bp.LastLifeSpent = effectiveCost;
+
+            if (item.ModItem is BlasphemySystem.IAgonizedWeapon)
+                bp.BeginAgonizedAttack(item);
 
            
             player.statLife -= effectiveCost;
@@ -67,7 +82,6 @@ namespace Blasphemy.Items
             CombatText.NewText(player.getRect(), Color.Red, $"-{effectiveCost}", dramatic: true);
 
             
-            int recoveryPercent = GetRecoveryPercent(item);
             if (recoveryPercent > 0)
             {
                 int recoveryGain = (int)Math.Floor(effectiveCost * recoveryPercent / 100f);
@@ -86,14 +100,36 @@ namespace Blasphemy.Items
             base.UseAnimation(item, player);
         }
 
+        public override void OnHitNPC(Item item, Player player, NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            if (!IsConditional(item)) return;
+            var bp = player.GetModPlayer<BlasphemyPlayer>();
+            if (!bp.TryMarkConditionalHit(item)) return;
+
+            int cost = GetLifeCost(item, player);
+            if (cost > 0)
+            {
+                int spent = Math.Min(player.statLife - 1, bp.GetEffectiveLifeCost(cost));
+                if (spent > 0)
+                {
+                    player.statLife -= spent;
+                    bp.AddRecovery((int)Math.Floor(spent * GetRecoveryPercent(item, player) / 100f));
+                    CombatText.NewText(player.getRect(), Color.Red, $"-{spent}", dramatic: true);
+                }
+            }
+
+            if (item.ModItem is BlasphemySystem.IPainWeapon painWeapon)
+                bp.AddPain(painWeapon.PainGain);
+        }
+
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
         {
-            int baseCost = GetLifeCost(item);
+            int baseCost = GetLifeCost(item, Main.LocalPlayer);
             if (baseCost <= 0) return;
 
             var bp = Main.LocalPlayer.GetModPlayer<BlasphemyPlayer>();
             int effectiveCost = bp.GetEffectiveLifeCost(baseCost);
-            int recoveryPercent = GetRecoveryPercent(item);
+            int recoveryPercent = GetRecoveryPercent(item, Main.LocalPlayer);
 
             
             string baseText = Language.GetTextValue("Mods.Blasphemy.Tooltips.LifeCost", effectiveCost, item.damage);

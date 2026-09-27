@@ -1,10 +1,10 @@
 ﻿using System;
 using Blasphemy.Items;
+using Blasphemy.Systems;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Blasphemy.Systems;
 
 namespace Blasphemy.Players
 {
@@ -33,6 +33,11 @@ namespace Blasphemy.Players
         private float _decayAccumulator; 
         
         public Item LastWeaponUsed;
+        public bool CurrentAttackAgonized;
+        public int CurrentAttackItemType;
+        public int LastLifeSpent;
+        private ulong _lastConditionalHitTick;
+        private int _lastConditionalItemType;
 
         public override void Initialize()
         {
@@ -155,33 +160,38 @@ namespace Blasphemy.Players
             return Math.Max(1, (int)cost);
         }
 
+        public void BeginAgonizedAttack(Item item)
+        {
+            CurrentAttackAgonized = IsAgonized;
+            CurrentAttackItemType = item.type;
+            if (IsAgonized)
+            {
+                IsAgonized = false;
+                PainStat = 0;
+                AgonyImmunityTimer = 10f;
+                LifeCostReductionTimer = 10f;
+                CombatText.NewText(Player.getRect(), new Color(255, 215, 0), "AGONY STRIKE!", dramatic: true);
+            }
+        }
+
+        public bool IsCurrentAttackAgonized(Item item) =>
+            CurrentAttackItemType == item.type && CurrentAttackAgonized;
+
+        public bool TryMarkConditionalHit(Item item)
+        {
+            ulong tick = Main.GameUpdateCount;
+            if (_lastConditionalItemType == item.type && tick - _lastConditionalHitTick < (ulong)Math.Max(1, item.useAnimation))
+                return false;
+
+            _lastConditionalItemType = item.type;
+            _lastConditionalHitTick = tick;
+            return true;
+        }
+
 
         private void HandleHit(Item item)
         {
-            if (LastWeaponUsed.ModItem is BlasphemySystem.IConditionalActivation)
-            {
-                Main.NewText(LastWeaponUsed);
-                if (LastWeaponUsed.ModItem is BlasphemySystem.ILifeCostItem lc)
-                {
-                    int effCost = GetEffectiveLifeCost(lc.LifeCost);
-                    Player.statLife -= effCost;
-                    if (Player.statLife < 0) Player.statLife = 0;
-                    CombatText.NewText(Player.getRect(), Color.Red, $"-{effCost}", dramatic: true);
-
-                    if (lc.RecoveryPercent > 0)
-                    {
-                        float recGain = (float)Math.Floor(effCost * lc.RecoveryPercent / 100f);
-                        AddRecovery((int)recGain);
-                    }
-                }
-
-                if (LastWeaponUsed.ModItem is BlasphemySystem.IPainWeapon pw)
-                {
-                    AddPain(pw.PainGain);
-                }
-            }
-            
-            if (IsAgonized)
+            if (IsAgonized && LastWeaponUsed.ModItem is not BlasphemySystem.IAgonizedWeapon)
             {
                 IsAgonized = false; 
                 PainStat = 0;

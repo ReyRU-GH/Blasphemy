@@ -22,6 +22,15 @@ namespace Blasphemy.Systems
             /// </summary>
             int RecoveryPercent { get; }
         }
+
+        public interface IContextualLifeCostItem
+        {
+            int GetLifeCost(Player player);
+            int GetRecoveryPercent(Player player);
+        }
+
+        public interface IAgonizedWeapon { }
+        public interface IExactAgonizedLifeCost { }
         public interface IPainWeapon
         {
             /// <summary>

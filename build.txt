@@ -1,6 +1,6 @@
 displayName = Blasphemy
-author = ReyRU
-version = 0.1
+author = The Blasphemy Team
+version = 0.3.0
 hideCode = false
 hideResources = false
 
