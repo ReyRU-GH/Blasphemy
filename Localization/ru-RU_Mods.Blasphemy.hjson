@@ -1,0 +1,172 @@
+// DamageClasses.SacrificialDamage.DisplayName: Sacrificial Damage
+// Death.LifeCost: "{0} has exhausted their life force."
+// Config.PainUI: Pain UI
+// WorldGen.DesertCavePassMessage: Mods.Blasphemy.WorldGen.DesertCavePassMessage
+
+Tooltips: {
+	// LifeCost: Costs {0} HP per swing
+	// Recovery: Converts {0}% of cost ({1}) to Recovery
+	// PainGain: You receive {0} of pain per use
+	// Conditional: You need to hit an enemy to receive pain
+}
+
+// Stats.RecoveryDisplay: Recovery: {0}
+
+Items: {
+	SacrificialSword: {
+		// DisplayName: Sacrificial Sword
+		// Tooltip: Test Description
+	}
+
+	PainAmulet: {
+		// Tooltip: ""
+		// DisplayName: Pain Amulet
+	}
+
+	GlassShard: {
+		Tooltip: Чередует уколы и взмахи. Агония: брошенный осколок оставляет опасное стекло.
+		DisplayName: Осколок стекла
+	}
+
+	WoodenStake: {
+		DisplayName: Деревянный колышек
+		Tooltip: Подбрасывает самонаводящиеся сгустки крови. Агония: сгустки выпускают лучи крови.
+	}
+
+	GoldenBlade: {
+		DisplayName: Золотое лезвие
+		Tooltip: Выпускает струю крови. Агония: продолжительный поток с убывающим напором.
+	}
+
+	PlatinumBlade: {
+		DisplayName: Платиновое лезвие
+		Tooltip: Выпускает струю крови. Агония: продолжительный поток с убывающим напором.
+	}
+
+	GraveNeedle: {
+		DisplayName: Могильная игла
+		Tooltip: Создаёт кровавое облако. Агония: большое облако окружает игрока.
+	}
+
+	RitualDagger: {
+		DisplayName: Ритуальный кинжал
+		Tooltip: Бьёт всех видимых врагов. Агония: тратит здоровье до 1 и снимает дебаффы.
+	}
+
+	VoidMirror: {
+		DisplayName: Зеркало пустоты
+		Tooltip: Выпускает щупальца пустоты. Агония: быстрые длинные щупальца летят вперёд.
+	}
+
+	VoodooDoll: {
+		DisplayName: Кукла вуду
+		Tooltip: Стреляет самонаводящимися черепами сквозь стены. При низком здоровье выпускает больше.
+	}
+
+	AncientBoneShards: {
+		DisplayName: Осколки древних костей
+		Tooltip: Непрерывная атака стоит всё больше здоровья и выпускает больше костей. Агония: кости прилипают и наносят периодический урон.
+	}
+
+	FossilRitual: {
+		// DisplayName: Fossil Ritual
+		// Tooltip: ""
+	}
+
+	SpacePylon: {
+		DisplayName: Небесный пилон
+		Tooltip: Работает на уровне космоса при двух NPC поблизости.
+	}
+
+	CorruptPylon: {
+		DisplayName: Искажённый пилон
+		Tooltip: Работает в Искажении без NPC поблизости.
+	}
+
+	CrimsonPylon: {
+		DisplayName: Кримзоновый пилон
+		Tooltip: Работает в Кримзоне без NPC поблизости.
+	}
+}
+
+Tiles: {
+	SpacePylonTile.MapEntry: Небесный пилон
+	CorruptPylonTile.MapEntry: Искажённый пилон
+	CrimsonPylonTile.MapEntry: Кримзоновый пилон
+}
+
+Conditions: {
+	DownedEaterOfWorlds: После победы над Пожирателем миров
+	DownedBrainOfCthulhu: После победы над Мозгом Ктулху
+}
+
+Configs: {
+	BlasphemyConfig: {
+		ShowPainBar: {
+			// Tooltip: ""
+			// Label: Show Pain Bar
+		}
+
+		PainBarScale: {
+			// Tooltip: ""
+			// Label: Pain Bar Scale
+		}
+
+		PainBarPosition: {
+			// Tooltip: ""
+			// Label: Pain Bar Position
+		}
+
+		Headers: {
+			// Mods.Blasphemy.Config.PainUI: Mods. Blasphemy. Config. Pain U I Header
+			// PainBarUI: Pain Bar U I Header
+		}
+
+		// DisplayName: Blasphemy Config
+
+		LockPainBarPosition: {
+			// Tooltip: ""
+			// Label: Lock Pain Bar Position
+		}
+
+		PainBarPosY: {
+			// Tooltip: ""
+			// Label: Pain Bar Pos Y
+		}
+
+		PainBarPosX: {
+			// Tooltip: ""
+			// Label: Pain Bar Pos X
+		}
+	}
+}
+
+Keybinds: {
+	// "Add Pain (Test).DisplayName": Add  Pain ( Test)
+	// "Remove Pain (Test).DisplayName": Remove  Pain ( Test)
+}
+
+NPCs: {
+	// FossilSnakeTail.DisplayName: Fossil Snake Tail
+	// FossilSnakeHead.DisplayName: Fossil Snake Head
+	// FossilSnakeBody.DisplayName: Fossil Snake Body
+	// FossilLizard.DisplayName: Fossil Lizard
+	// FossilFish.DisplayName: Fossil Fish
+	// FossilBoss.DisplayName: Fossil Boss
+}
+
+Projectiles: {
+	// PetrifyShotProjectile.DisplayName: Petrify Shot Projectile
+	// FossilShardProjectile.DisplayName: Fossil Shard Projectile
+	// AncientBoneProjectile.DisplayName: Ancient Bone Projectile
+	// BloodClotProjectile.DisplayName: Blood Clot Projectile
+	// BloodCloudProjectile.DisplayName: Blood Cloud Projectile
+	// BloodRayProjectile.DisplayName: Blood Ray Projectile
+	// BloodStreamController.DisplayName: Blood Stream Controller
+	// BloodStreamProjectile.DisplayName: Blood Stream Projectile
+	// GroundGlassProjectile.DisplayName: Ground Glass Projectile
+	// RitualPulseProjectile.DisplayName: Ritual Pulse Projectile
+	// ThrownGlassProjectile.DisplayName: Thrown Glass Projectile
+	// VoidTentacleProjectile.DisplayName: Void Tentacle Projectile
+	// VoodooSkullProjectile.DisplayName: Voodoo Skull Projectile
+}

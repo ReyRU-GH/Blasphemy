@@ -19,16 +19,20 @@ namespace Blasphemy.Systems
         private const float DefaultPosX = 50f;
         private const float DefaultPosY = 85f;
         private const float MouseDragEpsilon = 0.05f;
-        private const float BaseSpriteScale = 2.5f; // TODO: Change to 1f when sprite will be noramlized
+        private const float BaseSpriteScale = 1f;
+        private const int FrameCount = 4;
+        private const int TicksPerFrame = 20;
+        private const int FillLeft = 22;
+        private const int FillTop = 8;
+        private const int FillSourceLeft = 3;
+        private const int FillChannelWidth = 12;
 
         private static Vector2? _dragOffset;
-        private static Texture2D _barBgTexture;
         private static Texture2D _barFillTexture;
         private static Texture2D _barFrameTexture;
 
         public override void OnModLoad()
         {
-            _barBgTexture = ModContent.Request<Texture2D>("Blasphemy/Assets/Textures/UI/PainBar", AssetRequestMode.ImmediateLoad).Value;
             _barFillTexture = ModContent.Request<Texture2D>("Blasphemy/Assets/Textures/UI/PainBarFill", AssetRequestMode.ImmediateLoad).Value;
             _barFrameTexture = ModContent.Request<Texture2D>("Blasphemy/Assets/Textures/UI/PainBarFrame", AssetRequestMode.ImmediateLoad).Value;
         }
@@ -36,7 +40,7 @@ namespace Blasphemy.Systems
         public override void Unload()
         {
             _dragOffset = null;
-            _barBgTexture = _barFillTexture = _barFrameTexture = null;
+            _barFillTexture = _barFrameTexture = null;
         }
 
         public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers)
@@ -63,14 +67,18 @@ namespace Blasphemy.Systems
             
             float totalScale = Main.UIScale * config.PainBarScale * BaseSpriteScale;
             
+            Vector2 barSize = new Vector2(_barFrameTexture.Width, _barFrameTexture.Height / FrameCount) * totalScale;
             Vector2 screenPos = new Vector2(
                 (int)(screenRatio.X * 0.01f * Main.screenWidth),
-                (int)(screenRatio.Y * 0.01f * Main.screenHeight)
+                (int)(screenRatio.Y * 0.01f * Main.screenHeight - barSize.Y)
             );
+            screenPos.X = MathHelper.Clamp(screenPos.X, 0f, Math.Max(0f, Main.screenWidth - barSize.X));
+            screenPos.Y = MathHelper.Clamp(screenPos.Y, 0f, Math.Max(0f, Main.screenHeight - barSize.Y));
 
-            Vector2 barSize = _barBgTexture.Size() * totalScale;
+            bool showPainBar = config.ShowPainBar &&
+                (bp.PainStat > 0 || player.HeldItem.ModItem is BlasphemySystem.IPainWeapon);
 
-            if (config.ShowPainBar && bp.PainStat > 0)
+            if (showPainBar)
             {
                 Rectangle barRect = new Rectangle((int)screenPos.X, (int)screenPos.Y, (int)barSize.X, (int)barSize.Y);
                 bool isHovering = barRect.Contains(Main.MouseScreen.ToPoint());
@@ -86,7 +94,7 @@ namespace Blasphemy.Systems
                 }
             }
             
-            if (config.ShowPainBar && bp.PainStat > 0)
+            if (showPainBar)
             {
                 Rectangle mouseHitbox = new Rectangle((int)Main.MouseScreen.X, (int)Main.MouseScreen.Y, 8, 8);
                 Rectangle barRect = new Rectangle((int)screenPos.X, (int)screenPos.Y, (int)barSize.X, (int)barSize.Y);
@@ -105,7 +113,7 @@ namespace Blasphemy.Systems
 
                         Vector2 newCorner = Main.MouseScreen - _dragOffset.Value;
                         newScreenRatio.X = (100f * newCorner.X) / Main.screenWidth;
-                        newScreenRatio.Y = (100f * newCorner.Y) / Main.screenHeight;
+                        newScreenRatio.Y = (100f * (newCorner.Y + barSize.Y)) / Main.screenHeight;
                     }
 
                     Vector2 delta = newScreenRatio - screenRatio;
@@ -130,24 +138,27 @@ namespace Blasphemy.Systems
         private static void DrawPainBar(SpriteBatch spriteBatch, BlasphemyPlayer bp, Vector2 screenPos, float totalScale, bool isHovering)
         {
 
-            spriteBatch.Draw(_barBgTexture, screenPos, null, Color.White, 0f, Vector2.Zero, totalScale, SpriteEffects.None, 0f);
-            
-            float completionRatio = bp.MaxPain <= 0f ? 0f : bp.PainStat / (float)bp.MaxPain;
-            int fillWidth = (int)(_barFillTexture.Width * completionRatio);
-            Rectangle fillRect = new Rectangle(0, 0, fillWidth, _barFillTexture.Height);
+            int frameHeight = _barFrameTexture.Height / FrameCount;
+            int frameIndex = (int)(Main.GameUpdateCount / TicksPerFrame % FrameCount);
+            Rectangle frame = new Rectangle(0, frameIndex * frameHeight, _barFrameTexture.Width, frameHeight);
+            spriteBatch.Draw(_barFrameTexture, screenPos, frame, Color.White, 0f, Vector2.Zero, totalScale, SpriteEffects.None, 0f);
 
-            spriteBatch.Draw(_barFillTexture, screenPos, fillRect, Color.White, 0f, Vector2.Zero, totalScale, SpriteEffects.None, 0f);
-            
-            spriteBatch.Draw(_barFrameTexture, screenPos, null, Color.White, 0f, Vector2.Zero, totalScale, SpriteEffects.None, 0f);
+            float completionRatio = bp.MaxPain <= 0 ? 0f : MathHelper.Clamp(bp.PainStat / (float)bp.MaxPain, 0f, 1f);
+            int fillHeight = (int)Math.Ceiling(_barFillTexture.Height * completionRatio);
+            if (fillHeight > 0)
+            {
+                Rectangle fill = new Rectangle(FillSourceLeft, _barFillTexture.Height - fillHeight, FillChannelWidth, fillHeight);
+                Vector2 fillPosition = screenPos + new Vector2(FillLeft, FillTop + _barFillTexture.Height - fillHeight) * totalScale;
+                spriteBatch.Draw(_barFillTexture, fillPosition, fill, Color.White, 0f, Vector2.Zero, totalScale, SpriteEffects.None, 0f);
+            }
             
             if (isHovering)
             {
-                string text = $"{(int)bp.PainStat} / {bp.MaxPain}";
+                string text = $"{bp.PainStat} / {bp.MaxPain}";
                 Vector2 textSize = FontAssets.ItemStack.Value.MeasureString(text);
                 Vector2 textPos = screenPos + new Vector2(
-                    (_barBgTexture.Width * totalScale) / 2f - textSize.X / 2f,
-                    (_barBgTexture.Height * totalScale) / 2f - textSize.Y / 2f
-                );
+                    _barFrameTexture.Width * totalScale + 8f,
+                    frameHeight * totalScale / 2f - textSize.Y / 2f);
 
                 Utils.DrawBorderStringFourWay(
                     spriteBatch,
@@ -157,8 +168,7 @@ namespace Blasphemy.Systems
                     textPos.Y,
                     Color.White,
                     Color.Black,
-                    Vector2.Zero,
-                    1f
+                    Vector2.Zero
                 );
             }
         }

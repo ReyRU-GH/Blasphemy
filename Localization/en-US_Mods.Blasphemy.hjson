@@ -1,10 +1,7 @@
 DamageClasses.SacrificialDamage.DisplayName: Sacrificial Damage
 Death.LifeCost: "{0} has exhausted their life force."
 Config.PainUI: Pain UI
-
-WorldGen: {
-	DesertCavePassMessage: Mods.Blasphemy.WorldGen.DesertCavePassMessage
-}
+WorldGen.DesertCavePassMessage: Mods.Blasphemy.WorldGen.DesertCavePassMessage
 
 Tooltips: {
 	LifeCost: Costs {0} HP per swing
@@ -27,9 +24,80 @@ Items: {
 	}
 
 	GlassShard: {
-		Tooltip: ""
+		Tooltip: Alternates thrusts and slashes. Agony: throws a glass shard that scatters dangerous fragments.
 		DisplayName: Glass Shard
 	}
+
+	WoodenStake: {
+		DisplayName: Wooden Stake
+		Tooltip: Releases homing blood clots. Agony: the clots fire blood rays.
+	}
+
+	GoldenBlade: {
+		DisplayName: Golden Blade
+		Tooltip: Sprays blood. Agony: an extended, weakening stream.
+	}
+
+	PlatinumBlade: {
+		DisplayName: Platinum Blade
+		Tooltip: Sprays blood. Agony: an extended, weakening stream.
+	}
+
+	GraveNeedle: {
+		DisplayName: Grave Needle
+		Tooltip: Creates a lingering blood cloud. Agony: surrounds you with a large cloud.
+	}
+
+	RitualDagger: {
+		DisplayName: Ritual Dagger
+		Tooltip: Strikes every visible enemy. Agony: spends all but 1 HP and removes debuffs.
+	}
+
+	VoidMirror: {
+		DisplayName: Void Mirror
+		Tooltip: Summons seeking void tendrils. Agony: sends them farther and faster ahead.
+	}
+
+	VoodooDoll: {
+		DisplayName: Voodoo Doll
+		Tooltip: Fires seeking skulls through walls. Fires more below half health.
+	}
+
+	AncientBoneShards: {
+		DisplayName: Ancient Bone Shards
+		Tooltip: Successive uses cost more life and fire more shards. Agony: shards stick and bleed enemies.
+	}
+
+	FossilRitual: {
+		DisplayName: Fossil Ritual
+		Tooltip: ""
+	}
+
+	SpacePylon: {
+		DisplayName: Celestial Pylon
+		Tooltip: Requires space and two nearby town NPCs to function.
+	}
+
+	CorruptPylon: {
+		DisplayName: Corrupt Pylon
+		Tooltip: Functions in the Corruption without nearby NPCs.
+	}
+
+	CrimsonPylon: {
+		DisplayName: Crimson Pylon
+		Tooltip: Functions in the Crimson without nearby NPCs.
+	}
+}
+
+Tiles: {
+	SpacePylonTile.MapEntry: Celestial Pylon
+	CorruptPylonTile.MapEntry: Corrupt Pylon
+	CrimsonPylonTile.MapEntry: Crimson Pylon
+}
+
+Conditions: {
+	DownedEaterOfWorlds: After defeating the Eater of Worlds
+	DownedBrainOfCthulhu: After defeating the Brain of Cthulhu
 }
 
 Configs: {
@@ -85,4 +153,20 @@ NPCs: {
 	FossilLizard.DisplayName: Fossil Lizard
 	FossilFish.DisplayName: Fossil Fish
 	FossilBoss.DisplayName: Fossil Boss
+}
+
+Projectiles: {
+	PetrifyShotProjectile.DisplayName: Petrify Shot Projectile
+	FossilShardProjectile.DisplayName: Fossil Shard Projectile
+	AncientBoneProjectile.DisplayName: Ancient Bone Projectile
+	BloodClotProjectile.DisplayName: Blood Clot Projectile
+	BloodCloudProjectile.DisplayName: Blood Cloud Projectile
+	BloodRayProjectile.DisplayName: Blood Ray Projectile
+	BloodStreamController.DisplayName: Blood Stream Controller
+	BloodStreamProjectile.DisplayName: Blood Stream Projectile
+	GroundGlassProjectile.DisplayName: Ground Glass Projectile
+	RitualPulseProjectile.DisplayName: Ritual Pulse Projectile
+	ThrownGlassProjectile.DisplayName: Thrown Glass Projectile
+	VoidTentacleProjectile.DisplayName: Void Tentacle Projectile
+	VoodooSkullProjectile.DisplayName: Voodoo Skull Projectile
 }

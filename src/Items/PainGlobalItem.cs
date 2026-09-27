@@ -1,10 +1,10 @@
-﻿using Terraria;
-using Terraria.ModLoader;
-using Terraria.Localization;
-using System.Collections.Generic;
-using Microsoft.Xna.Framework;
-using Blasphemy.Systems;
+﻿using System.Collections.Generic;
 using Blasphemy.Players;
+using Blasphemy.Systems;
+using Microsoft.Xna.Framework;
+using Terraria;
+using Terraria.Localization;
+using Terraria.ModLoader;
 
 namespace Blasphemy.Items
 {
@@ -25,13 +25,7 @@ namespace Blasphemy.Items
 
         public override void OnHitNPC(Item item, Player player, NPC target, NPC.HitInfo hit, int damageDone)
         {
-            if (item.ModItem is BlasphemySystem.IPainWeapon pw && pw.PainGain > 0 && player.itemAnimation == player.itemAnimationMax && item.ModItem is BlasphemySystem.IConditionalActivation)
-            {
-                var bp = player.GetModPlayer<BlasphemyPlayer>();
-                bp.AddPain(pw.PainGain);
-                
-                bp.LastWeaponUsed = item;
-            }
+            // Conditional weapons are charged once per successful swing by LifeCostGlobalItem.
         }
 
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
